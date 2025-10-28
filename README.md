@@ -28,3 +28,13 @@ soch-loan/
 |   └loan-selection.cpp
 |
 └ main.cpp
+```
+
+## How to Run
+1. Open the terminal in project folder.
+2. Compile using:
+     g++ src/*.cpp main.cpp -I include -o soch-loan
+3. Run using:
+    .\soch-loan.exe
+
+
