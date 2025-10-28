@@ -5,8 +5,8 @@ A CLI-based chat bot to provide the loan.
 It reads predefined user inputs from file to intereact with users to give the feel of chat bot and guide the users applying for differect types of loans. 
 
 ## Features
-- Reads user inputs and Soch Loan responses from 'utterences.txt'.
-- Provides general response for unknown inputs using a '*' fallback.
+- Reads user inputs and Soch Loan responses from `utterences.txt`.
+- Provides general response for unknown inputs using a `*` fallback.
 - Supports Home Loan moudle with area, size, price, installments, and down payment options.
 - File-driven design. No need to modify the code to add new utterneces or loan data.
 - Eisily extendible to handle car, scooter or personal loans in future phases.
@@ -43,5 +43,11 @@ soch-loan/
 - **utterence-handler.h/cpp** - Module to read and match utterences.
 - **loan-selection.h/cpp** - Module to read and display loan data.
 - **main.cpp** - Controls the chatbot flow.
+
+## Extending the project
+- To add a new loan type (e.g., Car loan):
+    1. Create a file like `car.txt` in the `data/` folder.
+    2. Add new utterence for `C` in `utterences.txt`.
+    3. Load the file in the main program when `C` is selected.
 
 
