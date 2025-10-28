@@ -37,4 +37,11 @@ soch-loan/
 3. Run using:
     .\soch-loan.exe
 
+## File Description
+- **utterences.txt** - Contains predefined user inputs and chatbot responses.
+- **home.txt** - Contains home-loan details (area, size, price, etc.).
+- **utterence-handler.h/cpp** - Module to read and match utterences.
+- **loan-selection.h/cpp** - Module to read and display loan data.
+- **main.cpp** - Controls the chatbot flow.
+
 
