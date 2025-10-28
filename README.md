@@ -11,3 +11,20 @@ It reads predefined user inputs from file to intereact with users to give the fe
 - File-driven design. No need to modify the code to add new utterneces or loan data.
 - Eisily extendible to handle car, scooter or personal loans in future phases.
 
+## File Structure
+```
+soch-loan/
+|
+├ data/
+|   ├utterence.txt
+|   └home.txt
+|
+├ include/
+|   ├utterence-handler.h
+|   └loan-selection.h
+|
+├ src/
+|   ├utterence-handler.cpp
+|   └loan-selection.cpp
+|
+└ main.cpp
