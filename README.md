@@ -50,4 +50,16 @@ soch-loan/
     2. Add new utterence for `C` in `utterences.txt`.
     3. Load the file in the main program when `C` is selected.
 
+## Naming Conventions
+
+This project follows consistent naming conventions to ensure clarity, readability, and maintainability across all source files.
+
+| **Type** | **Convention** | **Example** |
+|-----------|----------------|--------------|
+| File | lowercase-hyphen | user-manager.cpp |
+| Class / Struct | PascalCase | EmployeeManager |
+| Function | camelCase | calculateSalary |
+| Variable | snake_case | employee_count |
+| Constant | UPPERCASE_WITH_UNDERSCORES | MAX_USERS |
+| Global | UPPERCASE_WITH_UNDERSCORES | GLOBAL_TOTAL_USERS |
 
