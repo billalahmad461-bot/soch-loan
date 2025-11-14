@@ -44,4 +44,15 @@ soch-loan/
 - **loan-selection.h/cpp** - Module to read and display loan data.
 - **main.cpp** - Controls the chatbot flow.
 
+## Naming Conventions
 
+This project follows consistent naming conventions to ensure clarity, readability, and maintainability across all source files.
+
+| **Type** | **Convention** | **Example** |
+|-----------|----------------|--------------|
+| File | lowercase-hyphen | user-manager.cpp |
+| Class / Struct | PascalCase | EmployeeManager |
+| Function | camelCase | calculateSalary |
+| Variable | snake_case | employee_count |
+| Constant | UPPERCASE_WITH_UNDERSCORES | MAX_USERS |
+| Global | UPPERCASE_WITH_UNDERSCORES | GLOBAL_TOTAL_USERS |
