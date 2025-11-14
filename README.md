@@ -56,3 +56,4 @@ This project follows consistent naming conventions to ensure clarity, readabilit
 | Variable | snake_case | employee_count |
 | Constant | UPPERCASE_WITH_UNDERSCORES | MAX_USERS |
 | Global | UPPERCASE_WITH_UNDERSCORES | GLOBAL_TOTAL_USERS |
+| Class Attributes | _snake_case | _input |
