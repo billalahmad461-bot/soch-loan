@@ -1,4 +1,4 @@
-#include "utterances-handler.h"
+#include "include\utterence-handler.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -9,7 +9,7 @@
 //file handling to trim spaces 
 
 
-std::string trim(const std::string &str)
+std::string UtterenceHandler::trim(const std::string &str)
 {
     size_t start = str.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) return " ";
@@ -21,7 +21,7 @@ std::string trim(const std::string &str)
 
 // converting to lower case to make input != casesensitive
 
-std::string toLower(const std::string &str)
+std::string UtterenceHandler::toLower(const std::string &str)
 {
     std:: string result = str;
     std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c){return std::tolower(c);});
@@ -38,13 +38,12 @@ UtterenceHandler::UtterenceHandler() {}  // default constructor
 
 UtterenceHandler::UtterenceHandler(const std::string &file_name)
 {
-    storeUserInputAndResponse("utterences.txt")
-
+    storeUserInputAndResponse("utterences.txt");
 }
 
 bool UtterenceHandler::storeUserInputAndResponse(const std::string &file_name)
 {
-    std::ifstream file("utterences.txt")
+    std::ifstream file("utterences.txt");
     if (!file.is_open())
     {
         std::cerr << "Error: could not open file!! "<<"utterences.txt"<<"\n";
@@ -81,10 +80,10 @@ bool UtterenceHandler::storeUserInputAndResponse(const std::string &file_name)
 
 }
 
-bool UtterenceHandler::displayResponse(const::std string &input)
+bool UtterenceHandler::generateResponse(const std::string &input)
 {
     std:: string cleared = trim(input);
-    cleaned = toLower(cleaned);
+    cleared = toLower(cleared);
 
     // searching for match
 
