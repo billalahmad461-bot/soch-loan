@@ -41,15 +41,15 @@ UtterenceHandler::UtterenceHandler() {}  // default constructor
 
 UtterenceHandler::UtterenceHandler(const std::string &file_name)
 {
-    storeUserInputAndResponse("utterences.txt");
+    storeUserInputAndResponse(file_name);
 }
 
 bool UtterenceHandler::storeUserInputAndResponse(const std::string &file_name)
 {
-    std::ifstream file("utterences.txt");
+    std::ifstream file(file_name);
     if (!file.is_open())
     {
-        std::cerr << "Error: could not open file!! "<<"utterences.txt"<<"\n";
+        std::cerr << "Error: could not open file!! "<<file_name<<"\n";
         return false; 
     }
 
@@ -133,5 +133,5 @@ bool UtterenceHandler::generateResponse(const std::string &input)
     Display display;
     display.greetingResponse("Hi! I'll be happy to help. Please press A if you want to apply for loan. Press X to exit");
     return false;
-    
+
 }
