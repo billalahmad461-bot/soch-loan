@@ -63,13 +63,14 @@ int main() {
     const std::string month_names[13] = {"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
     auto is_digit = [](const std::string& str) {
+        if (str.empty()) return false;
         for (char c : str) if (!std::isdigit(c)) return false;
         return true;
     };
 
     auto validate_date = [](const std::string& date) {
         if (date.length() != 10 || date[2] != '-' || date[5] != '-') return false;
-        // Additional checks can be added
+        // Additional checks can be added if needed (e.g., valid day/month)
         return true;
     };
 
@@ -79,16 +80,18 @@ int main() {
 
     auto generate_months = [&](const std::string& start, int num) -> std::vector<std::string> {
         size_t space = start.find(' ');
+        if (space == std::string::npos) return {};
         std::string m_str = start.substr(0, space);
         std::string y_str = start.substr(space + 1);
         int year = std::stoi(y_str);
         std::map<std::string, int> month_map = {
-            {"january",1},{"february",2},{"march",3},{"april",4},
-            {"may",5},{"june",6},{"july",7},{"august",8},
-            {"september",9},{"october",10},{"november",11},{"december",12}
+            {"january",1},{"february",2},{"march",3},{"april",4},{"may",5},{"june",6},
+            {"july",7},{"august",8},{"september",9},{"october",10},{"november",11},{"december",12}
         };
         std::string low_m = utterHandler.toLower(m_str);
-        int month = month_map[low_m];
+        auto it = month_map.find(low_m);
+        if (it == month_map.end()) return {};
+        int month = it->second;
         std::vector<std::string> res;
         for (int i = 0; i < num; ++i) {
             res.push_back(month_names[month] + " " + std::to_string(year));
@@ -106,7 +109,7 @@ int main() {
             LoanSelection ls("data/home.txt");
             auto filtered = ls.homeLoansInArea(app.sub_type);
             int idx = std::stoi(app.plan_id) - 1;
-            if (idx < 0 || idx >= filtered.size()) {
+            if (idx < 0 || idx >= static_cast<int>(filtered.size())) {
                 display.undefinedInputResponse("Invalid plan.");
                 return;
             }
@@ -117,6 +120,10 @@ int main() {
             CarLoanSelection cs("data/car.txt");
             auto filtered = cs.carsInMake(app.sub_type);
             int idx = std::stoi(app.plan_id) - 1;
+            if (idx < 0 || idx >= static_cast<int>(filtered.size())) {
+                display.undefinedInputResponse("Invalid plan.");
+                return;
+            }
             selected_car = filtered[idx];
             cs.calculateInstallmentBreakdown(selected_car, inst, rem, total_price, down_payment);
             installments = selected_car.getInstallments();
@@ -124,11 +131,19 @@ int main() {
             ScooterLoanSelection ss("data/scooter.txt");
             auto filtered = ss.scootersInMake(app.sub_type);
             int idx = std::stoi(app.plan_id) - 1;
+            if (idx < 0 || idx >= static_cast<int>(filtered.size())) {
+                display.undefinedInputResponse("Invalid plan.");
+                return;
+            }
             selected_scooter = filtered[idx];
             ss.calculateInstallmentBreakdown(selected_scooter, inst, rem, total_price, down_payment);
             installments = selected_scooter.getInstallments();
         }
         auto months = generate_months(app.starting_month, installments);
+        if (months.empty()) {
+            display.undefinedInputResponse("Invalid starting month.");
+            return;
+        }
         display.monthlyPlanDisplay(total_price, down_payment, months, inst, rem);
     };
 
@@ -159,19 +174,22 @@ int main() {
 
             display.greetingResponse(response);
 
-            // Allow user to jump directly with "h" — no need for "a" first
             if (userInput == "h" || userInput == "home" || userInput == "home loan") {
                 current_loan_type = "home";
+                std::string response = utterHandler.generateResponse("h");
+                display.greetingResponse(response);
                 currentState = State::SELECT_AREA_HOME;
-            }
-            // Normal flow: "a" → loan type selection
-            else if (userInput == "a") {
+            } else if (userInput == "a") {
                 currentState = State::SELECT_LOAN_TYPE;
             } else if (userInput == "c" || userInput == "car" || userInput == "car loan") {
                 current_loan_type = "car";
+                std::string response = utterHandler.generateResponse("c");
+                display.greetingResponse(response);
                 currentState = State::SELECT_MAKE_CAR;
             } else if (userInput == "s" || userInput == "scooter" || userInput == "scooter loan") {
                 current_loan_type = "scooter";
+                std::string response = utterHandler.generateResponse("s");
+                display.greetingResponse(response);
                 currentState = State::SELECT_MAKE_SCOOTER;
             } else if (userInput == "count applications") {
                 currentState = State::COUNT_CNIC;
@@ -204,13 +222,11 @@ int main() {
                 std::string response = utterHandler.getResponse("invalid_loan_type");
                 display.greetingResponse(response);
             }
-
         } else if (currentState == State::SELECT_AREA_HOME) {
             int areaNum = -1;
-            try {
+            if (is_digit(userInput)) {
                 areaNum = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (areaNum >= 1 && areaNum <= 4) {
                 std::string key = "select_area" + std::to_string(areaNum);
                 std::string response = utterHandler.getResponse(key);
@@ -228,17 +244,15 @@ int main() {
                     display.homeLoanDisplay(current_filtered_home, 0, current_filtered_home.size() - 1, prompt);
                     currentState = State::SELECT_PLAN_HOME;
                 }
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_area");
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::SELECT_MAKE_CAR) {
             int makeNum = -1;
-            try {
+            if (is_digit(userInput)) {
                 makeNum = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (makeNum >= 1 && makeNum <= 2) {
                 std::string key = "select_make" + std::to_string(makeNum);
                 std::string response = utterHandler.getResponse(key);
@@ -256,17 +270,15 @@ int main() {
                     display.carLoanDisplay(current_filtered_car, 0, current_filtered_car.size() - 1, prompt);
                     currentState = State::SELECT_PLAN_CAR;
                 }
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_make");
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::SELECT_MAKE_SCOOTER) {
             int makeNum = -1;
-            try {
+            if (is_digit(userInput)) {
                 makeNum = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (makeNum == 1) {
                 std::string key = "select_make" + std::to_string(makeNum);
                 std::string response = utterHandler.getResponse(key);
@@ -284,17 +296,15 @@ int main() {
                     display.scooterLoanDisplay(current_filtered_scooter, 0, current_filtered_scooter.size() - 1, prompt);
                     currentState = State::SELECT_PLAN_SCOOTER;
                 }
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_make");
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::SELECT_PLAN_HOME) {
             int id = -1;
-            try {
+            if (is_digit(userInput)) {
                 id = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (id >= 1 && id <= static_cast<int>(current_filtered_home.size())) {
                 current_plan_id = userInput;
                 std::string key = "selected_plan";
@@ -310,17 +320,15 @@ int main() {
                 display.promptForInput(promptInst);
 
                 currentState = State::CONFIRM_INSTALLMENT_HOME;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_plan");
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::SELECT_PLAN_CAR) {
             int id = -1;
-            try {
+            if (is_digit(userInput)) {
                 id = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (id >= 1 && id <= static_cast<int>(current_filtered_car.size())) {
                 current_plan_id = userInput;
                 std::string key = "selected_plan";
@@ -336,17 +344,15 @@ int main() {
                 display.promptForInput(promptInst);
 
                 currentState = State::CONFIRM_INSTALLMENT_CAR;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_plan");
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::SELECT_PLAN_SCOOTER) {
             int id = -1;
-            try {
+            if (is_digit(userInput)) {
                 id = std::stoi(userInput);
-            } catch (...) {}
-
+            }
             if (id >= 1 && id <= static_cast<int>(current_filtered_scooter.size())) {
                 current_plan_id = userInput;
                 std::string key = "selected_plan";
@@ -362,7 +368,6 @@ int main() {
                 display.promptForInput(promptInst);
 
                 currentState = State::CONFIRM_INSTALLMENT_SCOOTER;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_plan");
                 display.greetingResponse(invalid);
@@ -381,7 +386,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else if (low == "no" || low == "n") {
                 std::string response = utterHandler.getResponse("no_installment");
                 display.greetingResponse(response);
@@ -389,7 +393,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_yes_no");
                 display.greetingResponse(invalid);
@@ -408,7 +411,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else if (low == "no" || low == "n") {
                 std::string response = utterHandler.getResponse("no_installment");
                 display.greetingResponse(response);
@@ -416,7 +418,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_yes_no");
                 display.greetingResponse(invalid);
@@ -435,7 +436,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else if (low == "no" || low == "n") {
                 std::string response = utterHandler.getResponse("no_installment");
                 display.greetingResponse(response);
@@ -443,7 +443,6 @@ int main() {
                 std::string promptApply = utterHandler.getResponse("prompt_apply");
                 display.promptForInput(promptApply);
                 currentState = State::PROCEED_APPLY;
-
             } else {
                 std::string invalid = utterHandler.getResponse("invalid_yes_no");
                 display.greetingResponse(invalid);
@@ -464,21 +463,37 @@ int main() {
                 display.greetingResponse(invalid);
             }
         } else if (currentState == State::COLLECT_FULL_NAME) {
-            current_app.full_name = originalInput;
-            currentState = State::COLLECT_FATHER_NAME;
-            display.promptForInput(utterHandler.getResponse("prompt_father_name"));
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid name.");
+            } else {
+                current_app.full_name = originalInput;
+                currentState = State::COLLECT_FATHER_NAME;
+                display.promptForInput(utterHandler.getResponse("prompt_father_name"));
+            }
         } else if (currentState == State::COLLECT_FATHER_NAME) {
-            current_app.father_name = originalInput;
-            currentState = State::COLLECT_ADDRESS;
-            display.promptForInput(utterHandler.getResponse("prompt_address"));
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid name.");
+            } else {
+                current_app.father_name = originalInput;
+                currentState = State::COLLECT_ADDRESS;
+                display.promptForInput(utterHandler.getResponse("prompt_address"));
+            }
         } else if (currentState == State::COLLECT_ADDRESS) {
-            current_app.postal_address = originalInput;
-            currentState = State::COLLECT_CONTACT;
-            display.promptForInput(utterHandler.getResponse("prompt_contact"));
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid address.");
+            } else {
+                current_app.postal_address = originalInput;
+                currentState = State::COLLECT_CONTACT;
+                display.promptForInput(utterHandler.getResponse("prompt_contact"));
+            }
         } else if (currentState == State::COLLECT_CONTACT) {
-            current_app.contact_number = userInput;
-            currentState = State::COLLECT_EMAIL;
-            display.promptForInput(utterHandler.getResponse("prompt_email"));
+            if (userInput.empty() || !is_digit(userInput)) {
+                display.greetingResponse(utterHandler.getResponse("invalid_number"));
+            } else {
+                current_app.contact_number = userInput;
+                currentState = State::COLLECT_EMAIL;
+                display.promptForInput(utterHandler.getResponse("prompt_email"));
+            }
         } else if (currentState == State::COLLECT_EMAIL) {
             if (validate_email(userInput)) {
                 current_app.email_address = userInput;
@@ -531,39 +546,35 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_gender"));
             }
         } else if (currentState == State::COLLECT_DEPENDENTS) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_app.num_dependents = userInput;
                 currentState = State::COLLECT_ANNUAL_INCOME;
                 display.promptForInput(utterHandler.getResponse("prompt_annual_income"));
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_ANNUAL_INCOME) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_app.annual_income = userInput;
                 currentState = State::COLLECT_AVG_ELEC;
                 display.promptForInput(utterHandler.getResponse("prompt_avg_elec"));
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_AVG_ELEC) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_app.avg_electricity = userInput;
                 currentState = State::COLLECT_CURR_ELEC;
                 display.promptForInput(utterHandler.getResponse("prompt_curr_elec"));
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_CURR_ELEC) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_app.current_electricity = userInput;
                 currentState = State::COLLECT_HAS_EXISTING;
                 display.promptForInput(utterHandler.getResponse("prompt_has_existing"));
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_HAS_EXISTING) {
@@ -579,7 +590,7 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_yes_no"));
             }
         } else if (currentState == State::COLLECT_NUM_LOANS) {
-            try {
+            if (is_digit(userInput)) {
                 num_existing = std::stoi(userInput);
                 if (num_existing > 0) {
                     current_loan_index = 1;
@@ -592,13 +603,19 @@ int main() {
                     currentState = State::COLLECT_REF1_NAME;
                     display.promptForInput(utterHandler.getResponse("prompt_ref1_name"));
                 }
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_LOAN_ACTIVE) {
             std::string low = utterHandler.toLower(userInput);
-            if (low == "yes" || low == "no") {
-                current_loan_data["active"] = low;
+            if (low == "yes" || low == "y") {
+                current_loan_data["active"] = "yes";
+                currentState = State::COLLECT_LOAN_TOTAL;
+                std::string prompt = utterHandler.getResponse("prompt_loan_total");
+                prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
+                display.promptForInput(prompt);
+            } else if (low == "no" || low == "n") {
+                current_loan_data["active"] = "no";
                 currentState = State::COLLECT_LOAN_TOTAL;
                 std::string prompt = utterHandler.getResponse("prompt_loan_total");
                 prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
@@ -607,44 +624,45 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_yes_no"));
             }
         } else if (currentState == State::COLLECT_LOAN_TOTAL) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_loan_data["total"] = userInput;
                 currentState = State::COLLECT_LOAN_RETURNED;
                 std::string prompt = utterHandler.getResponse("prompt_loan_returned");
                 prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
                 display.promptForInput(prompt);
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_LOAN_RETURNED) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_loan_data["returned"] = userInput;
                 currentState = State::COLLECT_LOAN_DUE;
                 std::string prompt = utterHandler.getResponse("prompt_loan_due");
                 prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
                 display.promptForInput(prompt);
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_LOAN_DUE) {
-            try {
-                std::stoi(userInput);
+            if (is_digit(userInput)) {
                 current_loan_data["due"] = userInput;
                 currentState = State::COLLECT_LOAN_BANK;
                 std::string prompt = utterHandler.getResponse("prompt_loan_bank");
                 prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
                 display.promptForInput(prompt);
-            } catch (...) {
+            } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_number"));
             }
         } else if (currentState == State::COLLECT_LOAN_BANK) {
-            current_loan_data["bank"] = userInput;
-            currentState = State::COLLECT_LOAN_CATEGORY;
-            std::string prompt = utterHandler.getResponse("prompt_loan_category");
-            prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
-            display.promptForInput(prompt);
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid bank name.");
+            } else {
+                current_loan_data["bank"] = originalInput;
+                currentState = State::COLLECT_LOAN_CATEGORY;
+                std::string prompt = utterHandler.getResponse("prompt_loan_category");
+                prompt = utterHandler.replacePlaceholder(prompt, "{num}", std::to_string(current_loan_index));
+                display.promptForInput(prompt);
+            }
         } else if (currentState == State::COLLECT_LOAN_CATEGORY) {
             std::string low = utterHandler.toLower(userInput);
             if (low == "car" || low == "home" || low == "bike") {
@@ -672,17 +690,118 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_category"));
             }
         } else if (currentState == State::COLLECT_REF1_NAME) {
-            current_app.ref1_name = originalInput;
-            currentState = State::COLLECT_REF1_CNIC;
-            display.promptForInput(utterHandler.getResponse("prompt_ref1_cnic"));
-        } // Continue similar for all ref1, ref2 fields, with validation where applicable (cnic, date, email)
-         // ... (omitted for brevity, follow the pattern from thinking chain)
-         // After last field
-         else if (currentState == State::COLLECT_SALARY_SLIP) {
-            current_app.salary_slip = userInput;
-            currentState = State::COLLECT_CONFIRM;
-            display.promptForInput(utterHandler.getResponse("prompt_confirm"));
-         } else if (currentState == State::COLLECT_CONFIRM) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid name.");
+            } else {
+                current_app.ref1_name = originalInput;
+                currentState = State::COLLECT_REF1_CNIC;
+                display.promptForInput(utterHandler.getResponse("prompt_ref1_cnic"));
+            }
+        } else if (currentState == State::COLLECT_REF1_CNIC) {
+            if (userInput.length() == 13 && is_digit(userInput)) {
+                current_app.ref1_cnic = userInput;
+                currentState = State::COLLECT_REF1_ISSUE;
+                display.promptForInput(utterHandler.getResponse("prompt_ref1_issue"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_cnic"));
+            }
+        } else if (currentState == State::COLLECT_REF1_ISSUE) {
+            if (validate_date(userInput)) {
+                current_app.ref1_issue = userInput;
+                currentState = State::COLLECT_REF1_PHONE;
+                display.promptForInput(utterHandler.getResponse("prompt_ref1_phone"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_date"));
+            }
+        } else if (currentState == State::COLLECT_REF1_PHONE) {
+            if (userInput.empty() || !is_digit(userInput)) {
+                display.greetingResponse(utterHandler.getResponse("invalid_number"));
+            } else {
+                current_app.ref1_phone = userInput;
+                currentState = State::COLLECT_REF1_EMAIL;
+                display.promptForInput(utterHandler.getResponse("prompt_ref1_email"));
+            }
+        } else if (currentState == State::COLLECT_REF1_EMAIL) {
+            if (validate_email(userInput)) {
+                current_app.ref1_email = userInput;
+                currentState = State::COLLECT_REF2_NAME;
+                display.promptForInput(utterHandler.getResponse("prompt_ref2_name"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_email"));
+            }
+        } else if (currentState == State::COLLECT_REF2_NAME) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid name.");
+            } else {
+                current_app.ref2_name = originalInput;
+                currentState = State::COLLECT_REF2_CNIC;
+                display.promptForInput(utterHandler.getResponse("prompt_ref2_cnic"));
+            }
+        } else if (currentState == State::COLLECT_REF2_CNIC) {
+            if (userInput.length() == 13 && is_digit(userInput)) {
+                current_app.ref2_cnic = userInput;
+                currentState = State::COLLECT_REF2_ISSUE;
+                display.promptForInput(utterHandler.getResponse("prompt_ref2_issue"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_cnic"));
+            }
+        } else if (currentState == State::COLLECT_REF2_ISSUE) {
+            if (validate_date(userInput)) {
+                current_app.ref2_issue = userInput;
+                currentState = State::COLLECT_REF2_PHONE;
+                display.promptForInput(utterHandler.getResponse("prompt_ref2_phone"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_date"));
+            }
+        } else if (currentState == State::COLLECT_REF2_PHONE) {
+            if (userInput.empty() || !is_digit(userInput)) {
+                display.greetingResponse(utterHandler.getResponse("invalid_number"));
+            } else {
+                current_app.ref2_phone = userInput;
+                currentState = State::COLLECT_REF2_EMAIL;
+                display.promptForInput(utterHandler.getResponse("prompt_ref2_email"));
+            }
+        } else if (currentState == State::COLLECT_REF2_EMAIL) {
+            if (validate_email(userInput)) {
+                current_app.ref2_email = userInput;
+                currentState = State::COLLECT_CNIC_FRONT;
+                display.promptForInput(utterHandler.getResponse("prompt_cnic_front"));
+            } else {
+                display.greetingResponse(utterHandler.getResponse("invalid_email"));
+            }
+        } else if (currentState == State::COLLECT_CNIC_FRONT) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid path.");
+            } else {
+                current_app.cnic_front = userInput;
+                currentState = State::COLLECT_CNIC_BACK;
+                display.promptForInput(utterHandler.getResponse("prompt_cnic_back"));
+            }
+        } else if (currentState == State::COLLECT_CNIC_BACK) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid path.");
+            } else {
+                current_app.cnic_back = userInput;
+                currentState = State::COLLECT_ELEC_BILL;
+                display.promptForInput(utterHandler.getResponse("prompt_elec_bill"));
+            }
+        } else if (currentState == State::COLLECT_ELEC_BILL) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid path.");
+            } else {
+                current_app.elec_bill = userInput;
+                currentState = State::COLLECT_SALARY_SLIP;
+                display.promptForInput(utterHandler.getResponse("prompt_salary_slip"));
+            }
+        } else if (currentState == State::COLLECT_SALARY_SLIP) {
+            if (userInput.empty()) {
+                display.greetingResponse("Please enter a valid path.");
+            } else {
+                current_app.salary_slip = userInput;
+                currentState = State::COLLECT_CONFIRM;
+                display.promptForInput(utterHandler.getResponse("prompt_confirm"));
+            }
+        } else if (currentState == State::COLLECT_CONFIRM) {
             std::string low = utterHandler.toLower(userInput);
             if (low == "yes" || low == "y") {
                 current_app.app_id = appHandler.generateNextId();
@@ -697,7 +816,7 @@ int main() {
             } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_yes_no"));
             }
-         } else if (currentState == State::COUNT_CNIC) {
+        } else if (currentState == State::COUNT_CNIC) {
             if (userInput.length() == 13 && is_digit(userInput)) {
                 int sub = appHandler.countSubmitted(userInput);
                 int appr = appHandler.countApproved(userInput);
@@ -711,7 +830,7 @@ int main() {
             } else {
                 display.greetingResponse(utterHandler.getResponse("invalid_cnic"));
             }
-         } else if (currentState == State::VIEW_PLAN_ID) {
+        } else if (currentState == State::VIEW_PLAN_ID) {
             current_app_id = userInput;
             auto app = appHandler.getById(userInput);
             if (!app) {
@@ -727,8 +846,8 @@ int main() {
                 generate_plan(*app);
                 currentState = State::NORMAL;
             }
-         } else if (currentState == State::SET_START_MONTH) {
-                        // Validate
+        } else if (currentState == State::SET_START_MONTH) {
+            // Validate
             size_t space = userInput.find(' ');
             if (space == std::string::npos) {
                 display.greetingResponse(utterHandler.getResponse("invalid_month"));
@@ -738,9 +857,8 @@ int main() {
             std::string y_str = userInput.substr(space + 1);
             std::string low_m = utterHandler.toLower(m_str);
             std::map<std::string, int> month_map = {
-                {"january",1},{"february",2},{"march",3},{"april",4},
-                {"may",5},{"june",6},{"july",7},{"august",8},
-                {"september",9},{"october",10},{"november",11},{"december",12}
+                {"january",1},{"february",2},{"march",3},{"april",4},{"may",5},{"june",6},
+                {"july",7},{"august",8},{"september",9},{"october",10},{"november",11},{"december",12}
             };
             if (month_map.find(low_m) == month_map.end() || !is_digit(y_str)) {
                 display.greetingResponse(utterHandler.getResponse("invalid_month"));
