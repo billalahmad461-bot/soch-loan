@@ -6,38 +6,37 @@
 #include <chrono>
 
 // -------------------- COLOR + ANIMATION HELPERS --------------------
-static void setColor(int color) {
+void Display::setColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-static void typeText(const std::string &text, int speed = 15) {
+void Display::typeText(const std::string &text, int speed) {
     for (char c : text) {
         std::cout << c;
         std::this_thread::sleep_for(std::chrono::milliseconds(speed));
     }
 }
 
-static void boxTop() {
-    std::cout << "╔══════════════════════════════════════════════════════════════╗\n";
+void Display::boxTop() {
+    std::cout << "+------------------------------------------------------------+\n";
 }
 
-static void boxBottom() {
-    std::cout << "╚══════════════════════════════════════════════════════════════╝\n";
+void Display::boxBottom() {
+    std::cout << "+------------------------------------------------------------+\n";
 }
 
 // -------------------- GREETING --------------------
 void Display::greetingResponse(const std::string &utterance) {
-    system("cls");
     setColor(11);
     boxTop();
-    std::cout << "║";
+    std::cout << "|";
     setColor(14);
     std::cout << std::setw(34) << "WELCOME TO SOCH LOAN";
     setColor(11);
-    std::cout << std::setw(24) << "║\n";
+    std::cout << std::setw(12) << "|" << "\n";
     boxBottom();
     setColor(10);
-    typeText("\n" + utterance + "\n");
+    typeText("\n" + utterance + "\n\n");
     setColor(7);
 }
 
@@ -53,13 +52,13 @@ void Display::displyLoanTypes(const std::string &utterance) {
     setColor(14);
     std::cout << "\nAvailable Loan Types:\n\n";
     setColor(11);
-    std::cout << "┌───────────────┬───────────────────────────┐\n";
-    std::cout << "│  Loan Type    │         Description        │\n";
-    std::cout << "├───────────────┼───────────────────────────┤\n";
-    std::cout << "│ Home Loan     │ For buying a house         │\n";
-    std::cout << "│ Car Loan      │ For purchasing a vehicle   │\n";
-    std::cout << "│ Bike Loan     │ For electric/petrol bikes  │\n";
-    std::cout << "└───────────────┴───────────────────────────┘\n";
+    std::cout << "+---------------+---------------------------+\n";
+    std::cout << "| Loan Type     | Description               |\n";
+    std::cout << "+---------------+---------------------------+\n";
+    std::cout << "| Home Loan     | For buying a house       |\n";
+    std::cout << "| Car Loan      | For purchasing a vehicle |\n";
+    std::cout << "| Bike Loan     | For electric/petrol bikes|\n";
+    std::cout << "+---------------+---------------------------+\n";
     setColor(10);
     typeText("\nPlease select a loan type...\n");
     setColor(7);
@@ -70,114 +69,65 @@ void Display::selectAreaDisplay(const std::string &utterance) {
     setColor(11);
     std::cout << "\nSelect Area Category:\n\n";
     setColor(14);
-    std::cout << "┌───────────────┬──────────────┐\n";
-    std::cout << "│  Category     │   Example    │\n";
-    std::cout << "├───────────────┼──────────────┤\n";
-    std::cout << "│ City Area     │ Lahore       │\n";
-    std::cout << "│ Suburban      │ Bahria Town  │\n";
-    std::cout << "│ Rural         │ Village Area │\n";
-    std::cout << "└───────────────┴──────────────┘\n";
+    std::cout << "+-------------+------------+\n";
+    std::cout << "| Category    | Example    |\n";
+    std::cout << "+-------------+------------+\n";
+    std::cout << "| City Area   | Lahore     |\n";
+    std::cout << "| Suburban    | Bahria Town|\n";
+    std::cout << "| Rural       | Village    |\n";
+    std::cout << "+-------------+------------+\n";
     setColor(10);
     typeText("\nEnter your preferred area...\n");
     setColor(7);
 }
 
-// -------------------- HOME LOAN DISPLAY --------------------
-void Display::homeLoanDisplay(const std::vector<HomeLoan> &home_loan, int start, int end, const std::string &prompt) {
-    if (home_loan.empty()) {
-        setColor(12);
-        std::cout << "No home loan plans available!\n";
-        setColor(7);
-        return;
-    }
-
-    if (start < 0) start = 0;
-    if (end >= (int)home_loan.size()) end = home_loan.size() - 1;
-    if (start > end) start = 0;
-
-    setColor(11);
-    std::cout << "\nAVAILABLE HOME LOAN PLANS:\n\n";
-    setColor(14);
-    std::cout << "┌────┬──────────────┬───────────┬──────────────┬──────────────┐\n";
-    std::cout << "│ ID │ Area         │ Size      │ Price        │ Installments │\n";
-    std::cout << "├────┼──────────────┼───────────┼──────────────┼──────────────┤\n";
-
-    for (int i = start; i <= end; i++) {
-        std::cout << "│ "
-                  << std::setw(2) << (i + 1) << " │ "
-                  << std::setw(12) << home_loan[i].getArea() << " │ "
-                  << std::setw(9) << home_loan[i].getSize() << " │ "
-                  << std::setw(12) << home_loan[i].getPrice() << " │ "
-                  << std::setw(12) << home_loan[i].getInstallments() << " │\n";
-    }
-
-    std::cout << "└────┴──────────────┴───────────┴──────────────┴──────────────┘\n";
-
-    setColor(10);
-    std::string p = prompt;
-    if (p.empty()) p = "\nEnter the ID of the plan you want to view...\n";
-    typeText(p);
-    setColor(7);
-}
-
-// -------------------- SELECT HOME --------------------
+// -------------------- OTHER FUNCTIONS --------------------
 void Display::selectHomeDisplay() {
     setColor(14);
     typeText("\nEnter Home Plan Number: ");
     setColor(7);
 }
 
-// -------------------- MONTHLY PAYMENT --------------------
-void Display::payPerMonthDisplay(const std::string &price) {
+void Display::payPerMonthDisplay(const std::string &payment_info) {
     setColor(11);
     std::cout << "\nMonthly Payment:\n\n";
     setColor(10);
-    std::cout << "┌─────────────────────────┐\n";
-    std::cout << "│  " << price << "     │\n";
-    std::cout << "└─────────────────────────┘\n";
+    typeText(payment_info + "\n");
     setColor(7);
 }
 
-// -------------------- INSTALLMENT PLAN QUESTION --------------------
-void Display::isInstallmentPlanNeed() {
+void Display::isInstallmentPlanNeed(const std::string &prompt) {
     setColor(14);
-    typeText("\nDo you want to view the installment breakdown? (yes/no): ");
+    typeText("\n" + prompt + ": ");
     setColor(7);
 }
 
-// -------------------- INSTALLMENT BREAKDOWN --------------------
-void Display::monthlyInstallmentDisplay(const std::string &total_price,
-                                        const std::string &down_payment,
-                                        const std::vector<std::string> &installments,
-                                        const std::vector<std::string> &remaining_price) {
+void Display::monthlyInstallmentDisplay(
+    const std::string &total_price,
+    const std::string &down_payment,
+    const std::vector<std::string> &installments,
+    const std::vector<std::string> &remaining_price)
+{
     setColor(11);
     std::cout << "\nINSTALLMENT BREAKDOWN\n\n";
     setColor(14);
-    std::cout << "┌───────────────┬─────────────────────────┐\n";
-    std::cout << "│ Total Price   │ PKR " << std::setw(20) << total_price << " │\n";
-    std::cout << "│ Down Payment  │ PKR " << std::setw(20) << down_payment << " │\n";
-    std::cout << "└───────────────┴─────────────────────────┘\n\n";
+    std::cout << "+----------------+--------------------+\n";
+    std::cout << "| Total Price    | PKR " << std::setw(15) << total_price << " |\n";
+    std::cout << "| Down Payment   | PKR " << std::setw(15) << down_payment << " |\n";
+    std::cout << "+----------------+--------------------+\n\n";
 
-    std::cout << "┌───────────┬───────────────────┬─────────────────────┐\n";
-    std::cout << "│ Month     │ Installment (PKR) │ Remaining (PKR)    │\n";
-    std::cout << "├───────────┼───────────────────┼─────────────────────┤\n";
+    std::cout << "+-------+-----------------+-----------------+\n";
+    std::cout << "| Month | Installment (PKR)| Remaining (PKR) |\n";
+    std::cout << "+-------+-----------------+-----------------+\n";
 
     for (size_t i = 0; i < installments.size(); i++) {
-        std::cout << "│ "
-                  << std::setw(5) << (i + 1) << "    │ "
-                  << std::setw(15) << installments[i] << " │ "
-                  << std::setw(19) << remaining_price[i] << " │\n";
+        std::cout << "| " << std::setw(5) << (i + 1)
+                  << " | " << std::setw(15) << installments[i]
+                  << " | " << std::setw(15) << remaining_price[i] << " |\n";
     }
 
-    std::cout << "└───────────┴───────────────────┴─────────────────────┘\n";
+    std::cout << "+-------+-----------------+-----------------+\n";
     setColor(10);
     typeText("\nHope this helps! Let me know if you want another plan.\n");
-    setColor(7);
-}
-
-// -------------------- PROMPT --------------------
-void Display::promptForInput(const std::string &text) {
-    setColor(14);
-    typeText(text);
     setColor(7);
 }
