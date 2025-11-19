@@ -8,8 +8,10 @@ private:
 public:
     UtterenceHandler();
     UtterenceHandler(const std::string &file_name);
-    std::string trim(const std::string &str);
-    std::string toLower(const std::string &str);
+    std::string trim(const std::string &str) const;
+    std::string toLower(const std::string &str) const;
     bool storeUserInputAndResponse(const std::string &file_name);
-    bool generateResponse(const std::string &input);
+    std::string generateResponse(const std::string &input);
+    std::string getResponse(const std::string &key) const;
+    std::string replacePlaceholder(const std::string &text, const std::string &placeholder, const std::string &value) const;
 };
