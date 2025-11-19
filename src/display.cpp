@@ -80,6 +80,54 @@ void Display::selectAreaDisplay(const std::string &utterance) {
     typeText("\nEnter your preferred area...\n");
     setColor(7);
 }
+// -------------------- HOME LOAN --------------------
+void Display::homeLoanDisplay(
+    const std::vector<HomeLoan> &home_loan, 
+    int start, 
+    int end, 
+    const std::string &prompt
+) {
+    if (home_loan.empty()) {
+        setColor(12);
+        std::cout << "No home loan plans available!\n";
+        setColor(7);
+        return;
+    }
+
+    // Fix index range
+    if (start < 0) start = 0;
+    if (end >= (int)home_loan.size() || end == -1) end = home_loan.size() - 1;
+    if (start > end) start = 0;
+
+    setColor(11);
+    std::cout << "\nAVAILABLE HOME LOAN PLANS:\n\n";
+    setColor(14);
+
+    // ASCII table
+    std::cout << "+----+------------+---------+------------+--------------+\n";
+    std::cout << "| ID | Area       | Size    | Price      | Installments |\n";
+    std::cout << "+----+------------+---------+------------+--------------+\n";
+
+    for (int i = start; i <= end; i++) {
+        std::cout << "| "
+                  << std::setw(2) << (i + 1) << " | "
+                  << std::setw(10) << home_loan[i].getArea() << " | "
+                  << std::setw(7) << home_loan[i].getSize() << " | "
+                  << std::setw(10) << home_loan[i].getPrice() << " | "
+                  << std::setw(12) << home_loan[i].getInstallments() << " |\n";
+    }
+
+    std::cout << "+----+------------+---------+------------+--------------+\n";
+    setColor(10);
+
+    if (!prompt.empty()) {
+        typeText(prompt + "\n");
+    } else {
+        typeText("\nEnter the ID of the plan you want to view...\n");
+    }
+    setColor(7);
+}
+
 
 // -------------------- OTHER FUNCTIONS --------------------
 void Display::selectHomeDisplay() {
@@ -131,3 +179,10 @@ void Display::monthlyInstallmentDisplay(
     typeText("\nHope this helps! Let me know if you want another plan.\n");
     setColor(7);
 }
+
+void Display::promptForInput(const std::string &text) {
+    setColor(14);           // Use bright yellow for prompt
+    typeText(text);         // Print the prompt with typewriter effect
+    setColor(7);            // Reset to default color
+}
+
