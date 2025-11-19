@@ -5,19 +5,78 @@ Salam#Wa alaikum salam! Please press A if you want to apply for a loan. Press X 
 *#Hi! I'll be happy to help. Please press A if you want to apply for loan. Press X to exit
 A#Please select the category you want to apply for. Press H for a home loan, C for a car loan, S for a scooter loan, P for a personal loan. Press X to exit
 H#You are applying for a home loan. Please select area. Options are 1, 2, 3, 4
+C#You are applying for a car loan. Please select make. Options are 1, 2
+S#You are applying for a scooter loan. Please select make. Options are 1
+P#Sorry, personal loan is not implemented in this version.
 select_area1#You have selected Area 1. Here are the available options:
 select_area2#You have selected Area 2. Here are the available options:
 select_area3#You have selected Area 3. Here are the available options:
 select_area4#You have selected Area 4. Here are the available options:
+select_make1#You have selected Make 1. Here are the available options:
+select_make2#You have selected Make 2. Here are the available options:
 invalid_area#Invalid area selection. Please choose 1, 2, 3, or 4.
+invalid_make#Invalid make selection. Please choose valid option.
 invalid_loan_type#Invalid loan type selection. Please choose H for home loan, C for car loan, S for scooter loan, P for personal loan, or X to exit.
 selected_plan#You have selected plan {id}. Here is the monthly payment information:
 prompt_installment#Do you want to view the installment breakdown? (yes/no):
+prompt_apply#Do you want to proceed with the loan application? (yes/no):
 invalid_yes_no#Please enter yes or no.
 selected_installment#Here is the detailed monthly installment breakdown for your selected plan:
-no_loans#No home loans found for the selected area.
+no_loans#No loans found for the selected option.
 invalid_plan#Invalid plan ID. Please enter a valid ID from the list.
-not_implemented#Sorry, only home loan is implemented in this version.
+not_implemented#Sorry, this loan type is not implemented in this version.
 no_installment#Alright, let me know if you need anything else.
 exit#Exiting Soch Loan. Goodbye!
 prompt_select_plan#\nEnter the ID of the plan you want to view...\n
+prompt_full_name#Please enter your full name:
+prompt_father_name#Please enter your father's name:
+prompt_address#Please enter your postal address:
+prompt_contact#Please enter your contact number:
+prompt_email#Please enter your email address:
+invalid_email#Invalid email address. Please include @ and . 
+prompt_cnic#Please enter your CNIC number (13 digits without dashes):
+invalid_cnic#Invalid CNIC. Must be 13 digits without dashes.
+prompt_cnic_expiry#Please enter CNIC expiry date (DD-MM-YYYY):
+invalid_date#Invalid date format. Use DD-MM-YYYY.
+prompt_employment#Please enter employment status (self-employed, salaried, retired, unemployed):
+invalid_employment#Invalid employment status. Choose self-employed, salaried, retired, or unemployed.
+prompt_marital#Please enter marital status (single, married, divorced, widowed):
+invalid_marital#Invalid marital status. Choose single, married, divorced, or widowed.
+prompt_gender#Please enter gender (male, female, other):
+invalid_gender#Invalid gender. Choose male, female, or other.
+prompt_dependents#Please enter number of dependents (numeric):
+invalid_number#Invalid numeric value. Please enter a number.
+prompt_annual_income#Please enter annual income in PKR (numeric, no commas):
+prompt_avg_elec#Please enter monthly average electricity bill for last 12 months (PKR, numeric):
+prompt_curr_elec#Please enter current electricity bill amount (PKR, numeric):
+prompt_has_existing#Do you have any existing loans? (yes/no):
+prompt_num_loans#How many existing loans do you have? (numeric):
+prompt_loan_active#Is loan {num} active? (yes/no):
+prompt_loan_total#Enter total loan amount for loan {num} (PKR, numeric):
+prompt_loan_returned#Enter amount returned for loan {num} (PKR, numeric):
+prompt_loan_due#Enter amount due for loan {num} (PKR, numeric):
+prompt_loan_bank#Enter bank name for loan {num}:
+prompt_loan_category#Enter loan category for loan {num} (car, home, bike):
+invalid_category#Invalid loan category. Choose car, home, or bike.
+prompt_ref1_name#Please enter name of referee 1:
+prompt_ref1_cnic#Please enter CNIC of referee 1 (13 digits without dashes):
+prompt_ref1_issue#Please enter issue date of CNIC for referee 1 (DD-MM-YYYY):
+prompt_ref1_phone#Please enter phone number of referee 1:
+prompt_ref1_email#Please enter email address of referee 1:
+prompt_ref2_name#Please enter name of referee 2:
+prompt_ref2_cnic#Please enter CNIC of referee 2 (13 digits without dashes):
+prompt_ref2_issue#Please enter issue date of CNIC for referee 2 (DD-MM-YYYY):
+prompt_ref2_phone#Please enter phone number of referee 2:
+prompt_ref2_email#Please enter email address of referee 2:
+prompt_cnic_front#Please enter path to CNIC front image:
+prompt_cnic_back#Please enter path to CNIC back image:
+prompt_elec_bill#Please enter path to recent electricity bill image:
+prompt_salary_slip#Please enter path to salary slip or bank statement image:
+prompt_confirm#Do you want to submit the application? (yes/no):
+submit_success#Application submitted successfully with ID {id}.
+count applications#Please enter your CNIC to view application counts:
+view plan#Please enter application ID to view the payment plan:
+not_approved#This application is not approved.
+start_month_prompt#Please enter the starting month (e.g., January 2026):
+invalid_month#Invalid starting month format. Use Month YYYY.
+count_result#Submitted: {submitted}, Approved: {approved}, Rejected: {rejected}
