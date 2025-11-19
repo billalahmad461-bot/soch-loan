@@ -5,3 +5,19 @@ Salam#Wa alaikum salam! Please press A if you want to apply for a loan. Press X 
 *#Hi! I'll be happy to help. Please press A if you want to apply for loan. Press X to exit
 A#Please select the category you want to apply for. Press H for a home loan, C for a car loan, S for a scooter loan, P for a personal loan. Press X to exit
 H#You are applying for a home loan. Please select area. Options are 1, 2, 3, 4
+select_area1#You have selected Area 1. Here are the available options:
+select_area2#You have selected Area 2. Here are the available options:
+select_area3#You have selected Area 3. Here are the available options:
+select_area4#You have selected Area 4. Here are the available options:
+invalid_area#Invalid area selection. Please choose 1, 2, 3, or 4.
+invalid_loan_type#Invalid loan type selection. Please choose H for home loan, C for car loan, S for scooter loan, P for personal loan, or X to exit.
+selected_plan#You have selected plan {id}. Here is the monthly payment information:
+prompt_installment#Do you want to view the installment breakdown? (yes/no):
+invalid_yes_no#Please enter yes or no.
+selected_installment#Here is the detailed monthly installment breakdown for your selected plan:
+no_loans#No home loans found for the selected area.
+invalid_plan#Invalid plan ID. Please enter a valid ID from the list.
+not_implemented#Sorry, only home loan is implemented in this version.
+no_installment#Alright, let me know if you need anything else.
+exit#Exiting Soch Loan. Goodbye!
+prompt_select_plan#\nEnter the ID of the plan you want to view...\n
