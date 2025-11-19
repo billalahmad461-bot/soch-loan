@@ -195,4 +195,125 @@ void Display::promptForInput(const std::string &text) {
     typeText(text);         // Print the prompt with typewriter effect
     setColor(7);            // Reset to default color
 }
+void Display::carLoanDisplay(
+    const std::vector<CarLoan> &car_loans, 
+    int start, 
+    int end, 
+    const std::string &prompt
+) {
+    if (car_loans.empty()) {
+        setColor(12);
+        typeText("No car loan plans available!\n");
+        setColor(7);
+        return;
+    }
 
+    if (start < 0) start = 0;
+    if (end >= static_cast<int>(car_loans.size()) || end == -1) end = car_loans.size() - 1;
+
+    setColor(11);
+    typeText("\nAVAILABLE CAR LOAN PLANS:\n\n");
+
+    setColor(14);
+    std::cout << "+----+---------+---------+---------+------+------+----------------+--------------+\n";
+    std::cout << "| ID | Make    | Model   | Engine  | Used | Year | Price          | Installments |\n";
+    std::cout << "+----+---------+---------+---------+------+------+----------------+--------------+\n";
+
+    for (int i = start; i <= end; i++) {
+        std::cout << "| "
+                  << std::setw(2) << (i + 1) << " | "
+                  << std::setw(7) << car_loans[i].getMake() << " | "
+                  << std::setw(7) << car_loans[i].getModel() << " | "
+                  << std::setw(7) << car_loans[i].getEngine() << " | "
+                  << std::setw(4) << car_loans[i].getUsed() << " | "
+                  << std::setw(4) << car_loans[i].getManufacturingYear() << " | "
+                  << std::setw(14) << car_loans[i].getPrice() << " | "
+                  << std::setw(12) << car_loans[i].getInstallments() << " |\n";
+    }
+
+    std::cout << "+----+---------+---------+---------+------+------+----------------+--------------+\n";
+
+    setColor(10);
+    if (!prompt.empty()) {
+        typeText("\n" + prompt + "\n");
+    } else {
+        typeText("\nEnter the ID of the plan you want to view...\n");
+    }
+    setColor(7);
+}
+void Display::scooterLoanDisplay(
+    const std::vector<ScooterLoan> &scooter_loans, 
+    int start, 
+    int end, 
+    const std::string &prompt
+) {
+    if (scooter_loans.empty()) {
+        setColor(12);
+        typeText("No scooter loan plans available!\n");
+        setColor(7);
+        return;
+    }
+
+    if (start < 0) start = 0;
+    if (end >= static_cast<int>(scooter_loans.size()) || end == -1) end = scooter_loans.size() - 1;
+
+    setColor(11);
+    typeText("\nAVAILABLE SCOOTER LOAN PLANS:\n\n");
+
+    setColor(14);
+    std::cout << "+----+---------+---------+----------+---------------+-----------+----------------+--------------+\n";
+    std::cout << "| ID | Make    | Model   | Distance | Charging Time | Max Speed | Price          | Installments |\n";
+    std::cout << "+----+---------+---------+----------+---------------+-----------+----------------+--------------+\n";
+
+    for (int i = start; i <= end; i++) {
+        std::cout << "| "
+                  << std::setw(2) << (i + 1) << " | "
+                  << std::setw(7) << scooter_loans[i].getMake() << " | "
+                  << std::setw(7) << scooter_loans[i].getModel() << " | "
+                  << std::setw(8) << scooter_loans[i].getDistance() << " | "
+                  << std::setw(13) << scooter_loans[i].getChargingTime() << " | "
+                  << std::setw(9) << scooter_loans[i].getMaxSpeed() << " | "
+                  << std::setw(14) << scooter_loans[i].getPrice() << " | "
+                  << std::setw(12) << scooter_loans[i].getInstallments() << " |\n";
+    }
+
+    std::cout << "+----+---------+---------+----------+---------------+-----------+----------------+--------------+\n";
+
+    setColor(10);
+    if (!prompt.empty()) {
+        typeText("\n" + prompt + "\n");
+    } else {
+        typeText("\nEnter the ID of the plan you want to view...\n");
+    }
+    setColor(7);
+}
+void Display::monthlyPlanDisplay(
+    const std::string &total_price,
+    const std::string &down_payment,
+    const std::vector<std::string> &months,
+    const std::vector<std::string> &installments,
+    const std::vector<std::string> &remaining_price)
+{
+    setColor(11);
+    std::cout << "\nMONTHLY PAYMENT PLAN\n\n";
+    setColor(14);
+    std::cout << "+----------------+--------------------+\n";
+    std::cout << "| Total Price    | PKR " << std::setw(15) << total_price << " |\n";
+    std::cout << "| Down Payment   | PKR " << std::setw(15) << down_payment << " |\n";
+    std::cout << "+----------------+--------------------+\n\n";
+
+    std::cout << "+-----------------+-----------------+-----------------+\n";
+    std::cout << "| Month           | Installment (PKR)| Remaining (PKR) |\n";
+    std::cout << "+-----------------+-----------------+-----------------+\n";
+
+    for (size_t i = 0; i < installments.size(); i++) {
+        std::cout << "| " << std::setw(15) << months[i]
+                  << " | " << std::setw(15) << installments[i]
+                  << " | " << std::setw(15) << remaining_price[i] << " |\n";
+    }
+
+    std::cout << "+-----------------+-----------------+-----------------+\n";
+    setColor(10);
+    typeText("\nHope this helps! Let me know if you need anything else.\n");
+    setColor(7);
+}
