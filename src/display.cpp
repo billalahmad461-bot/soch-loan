@@ -26,19 +26,26 @@ void Display::boxBottom() {
 }
 
 // -------------------- GREETING --------------------
-void Display::greetingResponse(const std::string &utterance) {
+
+void Display::showGreetingBanner() {
     setColor(11);
     boxTop();
-    std::cout << "|";
+    std::cout << "║";
     setColor(14);
     std::cout << std::setw(34) << "WELCOME TO SOCH LOAN";
     setColor(11);
-    std::cout << std::setw(12) << "|" << "\n";
+    std::cout << std::setw(24) << "║\n";
     boxBottom();
+    setColor(7);
+}
+
+
+void Display::greetingResponse(const std::string &utterance) {
     setColor(10);
     typeText("\n" + utterance + "\n\n");
     setColor(7);
 }
+
 
 // -------------------- UNDEFINED INPUT --------------------
 void Display::undefinedInputResponse(const std::string &utterance) {
@@ -89,25 +96,26 @@ void Display::homeLoanDisplay(
 ) {
     if (home_loan.empty()) {
         setColor(12);
-        std::cout << "No home loan plans available!\n";
+        typeText("No home loan plans available!\n");
         setColor(7);
         return;
     }
 
     // Fix index range
     if (start < 0) start = 0;
-    if (end >= (int)home_loan.size() || end == -1) end = home_loan.size() - 1;
+    if (end >= static_cast<int>(home_loan.size()) || end == -1) end = home_loan.size() - 1;
     if (start > end) start = 0;
 
     setColor(11);
-    std::cout << "\nAVAILABLE HOME LOAN PLANS:\n\n";
-    setColor(14);
+    typeText("\nAVAILABLE HOME LOAN PLANS:\n\n");
 
-    // ASCII table
+    setColor(14);
+    // Table header
     std::cout << "+----+------------+---------+------------+--------------+\n";
     std::cout << "| ID | Area       | Size    | Price      | Installments |\n";
     std::cout << "+----+------------+---------+------------+--------------+\n";
 
+    // Table rows
     for (int i = start; i <= end; i++) {
         std::cout << "| "
                   << std::setw(2) << (i + 1) << " | "
@@ -118,15 +126,17 @@ void Display::homeLoanDisplay(
     }
 
     std::cout << "+----+------------+---------+------------+--------------+\n";
-    setColor(10);
 
+    setColor(10);
+    // Print prompt only once
     if (!prompt.empty()) {
-        typeText(prompt + "\n");
+        typeText("\n" + prompt + "\n");
     } else {
         typeText("\nEnter the ID of the plan you want to view...\n");
     }
     setColor(7);
 }
+
 
 
 // -------------------- OTHER FUNCTIONS --------------------

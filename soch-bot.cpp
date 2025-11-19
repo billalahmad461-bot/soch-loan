@@ -51,12 +51,13 @@ int main() {
             if (response.empty()) {
                 response = utterHandler.getResponse("*");
             }
+            if (userInput == "hi" || userInput == "hello" || userInput == "*") {
+                display.showGreetingBanner(); // show the banner only for greetings
+            }
             display.greetingResponse(response);
-
             if (userInput == "a") {
                 currentState = State::SELECT_LOAN_TYPE;
             }
-
         } else if (currentState == State::SELECT_LOAN_TYPE) {
             if (userInput == "h") {
                 std::string response = utterHandler.generateResponse("h");

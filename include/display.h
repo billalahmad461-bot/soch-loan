@@ -12,6 +12,7 @@ public:
     void boxBottom();
 
     // Public display methods
+    void showGreetingBanner();
     void greetingResponse(const std::string &utterence);
     void undefinedInputResponse(const std::string &utterence);
     void displyLoanTypes(const std::string &utterence);
