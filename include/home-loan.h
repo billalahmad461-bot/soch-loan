@@ -10,9 +10,11 @@ private:
 public:
     HomeLoan();
     HomeLoan(std::string area, std::string size, int installments, std::string price, std::string down_payment);
-    std::string getArea();
-    std::string getSize();
-    int getInstallments();
-    std::string getPrice();
-    std::string getDownPayment();
+    
+    // ADD CONST TO ALL GETTERS
+    std::string getArea() const;
+    std::string getSize() const;
+    int getInstallments() const;
+    std::string getPrice() const;
+    std::string getDownPayment() const;
 };
