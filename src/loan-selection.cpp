@@ -62,21 +62,19 @@ bool LoanSelection::storeHomeLoans(const std::string &file_name) {
 std::vector<HomeLoan> LoanSelection::homeLoansInArea(const std::string &utterence) {
     std::string area = utterence;
     std::transform(area.begin(), area.end(), area.begin(), ::tolower);
+    
     std::vector<HomeLoan> filteredLoans;
 
-    // WORKAROUND: Remove const from loop
-    for (auto &loan : _home_loans) {
+    for (const auto& loan : _home_loans) {
         std::string loanArea = loan.getArea();
         std::transform(loanArea.begin(), loanArea.end(), loanArea.begin(), ::tolower);
-        if (loanArea.find(area) != std::string::npos) filteredLoans.push_back(loan);
+        
+        if (loanArea.find(area) != std::string::npos) {
+            filteredLoans.push_back(loan);
+        }
     }
 
-    if (!filteredLoans.empty()) {
-        Display display;
-        display.homeLoanDisplay(filteredLoans, 0, filteredLoans.size() - 1);
-    }
-
-    return filteredLoans;
+    return filteredLoans;  // Only return — no display here!
 }
 
 bool LoanSelection::selectHome() {

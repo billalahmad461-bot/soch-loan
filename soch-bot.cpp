@@ -51,11 +51,20 @@ int main() {
             if (response.empty()) {
                 response = utterHandler.getResponse("*");
             }
+
+            // Show banner only on real greetings
             if (userInput == "hi" || userInput == "hello" || userInput == "*") {
-                display.showGreetingBanner(); // show the banner only for greetings
+                display.showGreetingBanner();
             }
+
             display.greetingResponse(response);
-            if (userInput == "a") {
+
+            // Allow user to jump directly with "h" — no need for "a" first
+            if (userInput == "h" || userInput == "home" || userInput == "home loan") {
+                currentState = State::SELECT_AREA;
+            }
+            // Normal flow: "a" → loan type selection
+            else if (userInput == "a") {
                 currentState = State::SELECT_LOAN_TYPE;
             }
         } else if (currentState == State::SELECT_LOAN_TYPE) {
