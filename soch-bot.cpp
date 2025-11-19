@@ -728,19 +728,23 @@ int main() {
                 currentState = State::NORMAL;
             }
          } else if (currentState == State::SET_START_MONTH) {
-            // Validate
+                        // Validate
             size_t space = userInput.find(' ');
             if (space == std::string::npos) {
                 display.greetingResponse(utterHandler.getResponse("invalid_month"));
-                return;
+                continue;
             }
             std::string m_str = userInput.substr(0, space);
             std::string y_str = userInput.substr(space + 1);
             std::string low_m = utterHandler.toLower(m_str);
-            std::map<std::string, int> month_map = {{"january",1},{"february",2},{"march",3},{"april",4},{"may",5},{"june",6},{"july",7},{"august",8},{"september",9},{"october",10},{"november",11},{"december",12}};
+            std::map<std::string, int> month_map = {
+                {"january",1},{"february",2},{"march",3},{"april",4},
+                {"may",5},{"june",6},{"july",7},{"august",8},
+                {"september",9},{"october",10},{"november",11},{"december",12}
+            };
             if (month_map.find(low_m) == month_map.end() || !is_digit(y_str)) {
                 display.greetingResponse(utterHandler.getResponse("invalid_month"));
-                return;
+                continue;
             }
             auto app = appHandler.getById(current_app_id);
             if (app) {
@@ -750,7 +754,7 @@ int main() {
                 generate_plan(*app);
             }
             currentState = State::NORMAL;
-         }
+        }
     }
 
     return 0;
