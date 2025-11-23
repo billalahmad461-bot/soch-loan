@@ -222,6 +222,7 @@ int main() {
                 std::string response = utterHandler.getResponse("invalid_loan_type");
                 display.greetingResponse(response);
             }
+
         } else if (currentState == State::SELECT_AREA_HOME) {
             int areaNum = -1;
             if (is_digit(userInput)) {
@@ -487,12 +488,12 @@ int main() {
                 display.promptForInput(utterHandler.getResponse("prompt_contact"));
             }
         } else if (currentState == State::COLLECT_CONTACT) {
-            if (userInput.empty() || !is_digit(userInput)) {
-                display.greetingResponse(utterHandler.getResponse("invalid_number"));
-            } else {
+            if (userInput.length() == 11 && is_digit(userInput)) {
                 current_app.contact_number = userInput;
                 currentState = State::COLLECT_EMAIL;
                 display.promptForInput(utterHandler.getResponse("prompt_email"));
+            } else {
+                display.greetingResponse("Invalid contact number. Must be 11 digits.");
             }
         } else if (currentState == State::COLLECT_EMAIL) {
             if (validate_email(userInput)) {
@@ -714,12 +715,12 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_date"));
             }
         } else if (currentState == State::COLLECT_REF1_PHONE) {
-            if (userInput.empty() || !is_digit(userInput)) {
-                display.greetingResponse(utterHandler.getResponse("invalid_number"));
-            } else {
+            if (userInput.length() == 11 && is_digit(userInput)) {
                 current_app.ref1_phone = userInput;
                 currentState = State::COLLECT_REF1_EMAIL;
                 display.promptForInput(utterHandler.getResponse("prompt_ref1_email"));
+            } else {
+                display.greetingResponse("Invalid phone number. Must be 11 digits.");
             }
         } else if (currentState == State::COLLECT_REF1_EMAIL) {
             if (validate_email(userInput)) {
@@ -754,12 +755,12 @@ int main() {
                 display.greetingResponse(utterHandler.getResponse("invalid_date"));
             }
         } else if (currentState == State::COLLECT_REF2_PHONE) {
-            if (userInput.empty() || !is_digit(userInput)) {
-                display.greetingResponse(utterHandler.getResponse("invalid_number"));
-            } else {
+            if (userInput.length() == 11 && is_digit(userInput)) {
                 current_app.ref2_phone = userInput;
                 currentState = State::COLLECT_REF2_EMAIL;
                 display.promptForInput(utterHandler.getResponse("prompt_ref2_email"));
+            } else {
+                display.greetingResponse("Invalid phone number. Must be 11 digits.");
             }
         } else if (currentState == State::COLLECT_REF2_EMAIL) {
             if (validate_email(userInput)) {
