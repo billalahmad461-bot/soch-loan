@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include "include/utterence-handler.h"
 #include "include/loan-selection.h"
@@ -806,8 +807,19 @@ int main() {
             std::string low = utterHandler.toLower(userInput);
             if (low == "yes" || low == "y") {
                 current_app.app_id = appHandler.generateNextId();
-                appHandler.add(current_app);
-                appHandler.save("data/applications.txt");
+
+                std::ofstream file("data/applications.txt", std::ios::app);
+                if (file.is_open()) {
+                    file << current_app.serialize() << "\n";
+                    file.close();
+                    appHandler.load("data/applications.txt");  // reload data
+                } else {
+                    display.greetingResponse("Error saving application!");
+                }
+
+                std::string success = utterHandler.getResponse("submit_success");
+                success = utterHandler.replacePlaceholder(success, "{id}", current_app.app_id);
+                display.greetingResponse(success);
                 std::string success = utterHandler.getResponse("submit_success");
                 success = utterHandler.replacePlaceholder(success, "{id}", current_app.app_id);
                 display.greetingResponse(success);

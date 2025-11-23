@@ -1,12 +1,14 @@
+// File: src/application-handler.cpp (Unchanged - But now works with # delimiter)
 #include "../include/application-handler.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <cctype>
 
 ApplicationHandler::ApplicationHandler() {}
 
-bool ApplicationHandler::load(const std::string& file_name) {
+bool ApplicationHandler::load(const std::string &file_name) {
     std::ifstream file(file_name);
     if (!file.is_open()) return true; // If no file, empty is ok
 
@@ -22,7 +24,7 @@ bool ApplicationHandler::load(const std::string& file_name) {
     return true;
 }
 
-bool ApplicationHandler::save(const std::string& file_name) const {
+bool ApplicationHandler::save(const std::string &file_name) const {
     std::ofstream file(file_name);
     if (!file.is_open()) return false;
 

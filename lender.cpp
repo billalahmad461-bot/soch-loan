@@ -1,14 +1,15 @@
+// File: lender.cpp (Lender Side - Fully Fixed & Working)
 #include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 #include "../include/application-handler.h"
 
+// Beautiful printing function with fixed existing loans parsing
 void printApplication(const Application& app) {
-    std::cout << "ID: " << app.app_id << "\n";
-    std::cout << "Loan Type: " << app.loan_type << "\n";
-    std::cout << "Sub Type: " << app.sub_type << "\n";
-    std::cout << "Plan ID: " << app.plan_id << "\n";
+    std::cout << "\n=== APPLICATION DETAILS (ID: " << app.app_id << ") ===\n";
+    std::cout << "Loan Type: " << app.loan_type << " (" << app.sub_type << " - Plan " << app.plan_id << ")\n";
     std::cout << "Full Name: " << app.full_name << "\n";
     std::cout << "Father's Name: " << app.father_name << "\n";
     std::cout << "Postal Address: " << app.postal_address << "\n";
@@ -20,10 +21,42 @@ void printApplication(const Application& app) {
     std::cout << "Marital: " << app.marital_status << "\n";
     std::cout << "Gender: " << app.gender << "\n";
     std::cout << "Dependents: " << app.num_dependents << "\n";
-    std::cout << "Annual Income: " << app.annual_income << "\n";
-    std::cout << "Avg Electricity: " << app.avg_electricity << "\n";
-    std::cout << "Current Electricity: " << app.current_electricity << "\n";
-    std::cout << "Existing Loans: " << app.existing_loans << "\n"; // can parse if needed
+    std::cout << "Annual Income: PKR " << app.annual_income << "\n";
+    std::cout << "Avg Electricity: PKR " << app.avg_electricity << "\n";
+    std::cout << "Current Electricity: PKR " << app.current_electricity << "\n";
+
+    // Fixed: Nice printing for existing loans
+    std::cout << "Existing Loans: \n";
+    if (app.existing_loans == "no") {
+        std::cout << "  None\n";
+    } else if (app.existing_loans.find("yes") == 0) {
+        std::string loans_str = app.existing_loans.substr(3); // Skip "yes"
+        std::stringstream ss(loans_str);
+        std::string loan;
+        int loan_num = 1;
+        while (std::getline(ss, loan, '|')) {
+            if (loan.empty()) continue;
+            std::stringstream loan_ss(loan);
+            std::string active, total, returned, due, bank, category;
+            std::getline(loan_ss, active, ',');
+            std::getline(loan_ss, total, ',');
+            std::getline(loan_ss, returned, ',');
+            std::getline(loan_ss, due, ',');
+            std::getline(loan_ss, bank, ',');
+            std::getline(loan_ss, category, ',');
+            std::cout << "  Loan " << loan_num << ":\n";
+            std::cout << "    Active: " << active << "\n";
+            std::cout << "    Total: PKR " << total << "\n";
+            std::cout << "    Returned: PKR " << returned << "\n";
+            std::cout << "    Due: PKR " << due << "\n";
+            std::cout << "    Bank: " << bank << "\n";
+            std::cout << "    Category: " << category << "\n";
+            ++loan_num;
+        }
+    } else {
+        std::cout << "  " << app.existing_loans << "\n";
+    }
+
     std::cout << "Ref1 Name: " << app.ref1_name << "\n";
     std::cout << "Ref1 CNIC: " << app.ref1_cnic << "\n";
     std::cout << "Ref1 Issue: " << app.ref1_issue << "\n";
@@ -40,6 +73,7 @@ void printApplication(const Application& app) {
     std::cout << "Salary Slip: " << app.salary_slip << "\n";
     std::cout << "Status: " << app.status << "\n";
     std::cout << "Starting Month: " << app.starting_month << "\n";
+    std::cout << "============================\n";
 }
 
 int main() {
@@ -48,41 +82,58 @@ int main() {
 
     int choice;
     while (true) {
+        std::cout << "\n=== Lender Portal ===\n";
         std::cout << "1. List applications\n";
         std::cout << "2. View details\n";
         std::cout << "3. Approve\n";
         std::cout << "4. Reject\n";
         std::cout << "5. Exit\n";
+        std::cout << "Choose: ";
         std::cin >> choice;
+        std::cin.ignore();  // Clear buffer for getline
 
         if (choice == 1) {
-            for (const auto& app : handler.getApplications()) {
-                std::cout << app.app_id << " " << app.full_name << " " << app.cnic_number << " " << app.status << "\n";
+            const auto& apps = handler.getApplications();
+            if (apps.empty()) {
+                std::cout << "No applications found.\n";
+            } else {
+                std::cout << "\nList of Applications:\n";
+                for (const auto& app : apps) {
+                    std::cout << app.app_id << " - " << app.full_name << " (" << app.cnic_number << ") - Status: " << app.status << "\n";
+                }
             }
         } else if (choice == 2) {
             std::string id;
-            std::cout << "Enter ID: ";
-            std::cin >> id;
+            std::cout << "Enter ID (e.g., 0001): ";
+            std::getline(std::cin, id);
             const Application* app = handler.getById(id);
             if (app) {
                 printApplication(*app);
             } else {
-                std::cout << "Not found.\n";
+                std::cout << "Application not found! Check ID format (e.g., 0001).\n";
             }
         } else if (choice == 3 || choice == 4) {
             std::string id;
-            std::cout << "Enter ID: ";
-            std::cin >> id;
+            std::cout << "Enter ID (e.g., 0001): ";
+            std::getline(std::cin, id);
             Application* app = handler.getById(id);
-            if (app && app->status == "submitted") {
-                app->status = (choice == 3) ? "approved" : "rejected";
-                handler.save("data/applications.txt");
-                std::cout << "Updated.\n";
+            if (app) {
+                if (app->status != "submitted") {
+                    std::cout << "Cannot update — status is already " << app->status << ".\n";
+                } else {
+                    app->status = (choice == 3) ? "approved" : "rejected";
+                    handler.update(*app);
+                    handler.save("data/applications.txt");
+                    std::cout << "Application " << id << " is now " << app->status << "!\n";
+                }
             } else {
-                std::cout << "Cannot update.\n";
+                std::cout << "Application not found! Check ID format (e.g., 0001).\n";
             }
         } else if (choice == 5) {
+            std::cout << "Goodbye!\n";
             break;
+        } else {
+            std::cout << "Invalid choice. Choose 1-5.\n";
         }
     }
 

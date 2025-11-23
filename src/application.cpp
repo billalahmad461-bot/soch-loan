@@ -1,18 +1,48 @@
+// File: src/application.cpp (Fixed to handle optional final #)
 #include "../include/application.h"
 #include <sstream>
+#include <iostream>
 #include <vector>
 
 Application::Application() : status("submitted") {}
 
 std::string Application::serialize() const {
     std::stringstream ss;
-    ss << app_id << "#" << loan_type << "#" << sub_type << "#" << plan_id << "#" << full_name << "#" << father_name << "#"
-       << postal_address << "#" << contact_number << "#" << email_address << "#" << cnic_number << "#" << cnic_expiry << "#"
-       << employment_status << "#" << marital_status << "#" << gender << "#" << num_dependents << "#" << annual_income << "#"
-       << avg_electricity << "#" << current_electricity << "#" << existing_loans << "#" << ref1_name << "#" << ref1_cnic << "#"
-       << ref1_issue << "#" << ref1_phone << "#" << ref1_email << "#" << ref2_name << "#" << ref2_cnic << "#"
-       << ref2_issue << "#" << ref2_phone << "#" << ref2_email << "#" << cnic_front << "#" << cnic_back << "#"
-       << elec_bill << "#" << salary_slip << "#" << status << "#" << starting_month;
+    ss << app_id << "#"
+       << loan_type << "#"
+       << sub_type << "#"
+       << plan_id << "#"
+       << full_name << "#"
+       << father_name << "#"
+       << postal_address << "#"
+       << contact_number << "#"
+       << email_address << "#"
+       << cnic_number << "#"
+       << cnic_expiry << "#"
+       << employment_status << "#"
+       << marital_status << "#"
+       << gender << "#"
+       << num_dependents << "#"
+       << annual_income << "#"
+       << avg_electricity << "#"
+       << current_electricity << "#"
+       << existing_loans << "#"
+       << ref1_name << "#"
+       << ref1_cnic << "#"
+       << ref1_issue << "#"
+       << ref1_phone << "#"
+       << ref1_email << "#"
+       << ref2_name << "#"
+       << ref2_cnic << "#"
+       << ref2_issue << "#"
+       << ref2_phone << "#"
+       << ref2_email << "#"
+       << cnic_front << "#"
+       << cnic_back << "#"
+       << elec_bill << "#"
+       << salary_slip << "#"
+       << status << "#"
+       << starting_month;
     return ss.str();
 }
 
@@ -23,7 +53,8 @@ void Application::deserialize(const std::string& line) {
     while (std::getline(ss, token, '#')) {
         parts.push_back(token);
     }
-    if (parts.size() == 35) {
+    size_t num = parts.size();
+    if (num == 34 || num == 35) {
         app_id = parts[0];
         loan_type = parts[1];
         sub_type = parts[2];
@@ -58,6 +89,12 @@ void Application::deserialize(const std::string& line) {
         elec_bill = parts[31];
         salary_slip = parts[32];
         status = parts[33];
-        starting_month = parts[34];
+        if (num == 35) {
+            starting_month = parts[34];
+        } else {
+            starting_month = "";
+        }
+    } else {
+        std::cerr << "Invalid line format - expected 34 or 35 fields, got " << num << "\n";
     }
 }
