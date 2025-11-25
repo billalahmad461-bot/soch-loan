@@ -820,10 +820,6 @@ int main() {
                 std::string success = utterHandler.getResponse("submit_success");
                 success = utterHandler.replacePlaceholder(success, "{id}", current_app.app_id);
                 display.greetingResponse(success);
-                std::string success = utterHandler.getResponse("submit_success");
-                success = utterHandler.replacePlaceholder(success, "{id}", current_app.app_id);
-                display.greetingResponse(success);
-                currentState = State::NORMAL;
             } else if (low == "no" || low == "n") {
                 currentState = State::NORMAL;
             } else {
